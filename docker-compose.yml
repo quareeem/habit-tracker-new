@@ -1,0 +1,23 @@
+version: '3.9'
+
+services:
+  web:
+    build: ./
+    command: bash -c "python manage.py collectstatic --no-input && python manage.py migrate && python manage.py create_superuser && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/usr/src/app/
+      - ./static_files:/usr/src/app/static/
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+    restart: on-failure
+
+  db:
+    image: postgres:14-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=1q2w3e4r
+      - POSTGRES_DB=habit
